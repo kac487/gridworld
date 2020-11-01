@@ -3,43 +3,43 @@ import matplotlib as mpl
 
 
 class Window:
-	def __init__(self):
-		self.fig, self.ax = plt.subplots()
-		self.fig.canvas.set_window_title("gridworld")
-		self.cmap = mpl.colors.ListedColormap(['black', 'white', 'red', 'green'])
-		bounds = [-2, -0.5, 0.5, 1.5, 2]
-		self.norm = mpl.colors.BoundaryNorm(bounds, self.cmap.N)
+    def __init__(self):
+        self.fig, self.ax = plt.subplots()
+        self.fig.canvas.set_window_title("gridworld")
+        self.cmap = mpl.colors.ListedColormap(['black', 'white', 'red', 'green'])
+        bounds = [-2, -0.5, 0.5, 1.5, 2]
+        self.norm = mpl.colors.BoundaryNorm(bounds, self.cmap.N)
 
-		self.ax.set_xticks([], [])
-		self.ax.set_yticks([], [])
+        self.ax.set_xticks([], [])
+        self.ax.set_yticks([], [])
 
-		self.closed = False
+        self.closed = False
 
-		def close_handler(evt):
-			self.closed = True
-		self.fig.canvas.mpl_connect('close_event', close_handler)
+        def close_handler(evt):
+            self.closed = True
+        self.fig.canvas.mpl_connect('close_event', close_handler)
 
-	def show_grid(self, grid):
-		
-		self.ax.imshow(grid, cmap=self.cmap, norm=self.norm)
-		self.fig.canvas.draw()
+    def show_grid(self, grid):
 
-		# Let matplotlib process UI events
-		# This is needed for interactive mode to work properly
-		plt.pause(0.001)
+        self.ax.imshow(grid, cmap=self.cmap, norm=self.norm)
+        self.fig.canvas.draw()
 
-	def reg_key_handler(self, key_handler):
-		self.fig.canvas.mpl_connect('key_press_event', key_handler)
+        # Let matplotlib process UI events
+        # This is needed for interactive mode to work properly
+        plt.pause(0.001)
 
-	def show(self, block=True):
-		# If not blocking, trigger interactive mode
-		if not block:
-			plt.ion()
+    def reg_key_handler(self, key_handler):
+        self.fig.canvas.mpl_connect('key_press_event', key_handler)
 
-		# Show the plot
-		# In non-interative mode, this enters the matplotlib event loop
-		# In interactive mode, this call does not block
-		plt.show()
+    def show(self, block=True):
+        # If not blocking, trigger interactive mode
+        if not block:
+            plt.ion()
 
-	def close(self):
-		plt.close()
+        # Show the plot
+        # In non-interative mode, this enters the matplotlib event loop
+        # In interactive mode, this call does not block
+        plt.show()
+
+    def close(self):
+        plt.close()
