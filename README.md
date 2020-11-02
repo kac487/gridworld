@@ -1,4 +1,15 @@
-# gridworld
-Simple gridworld environment for tabular reinforcement learning experiment
+# Grid Soccer
+Simple grid soccer world with pixels
 
-![img_0](./imgs/img_0.gif)
+![img_0](./img/demo_grid2.gif)
+
+---
+#### Game Rules:
+
+- Initalization
+
+- Observations
+
+- Actions
+
+- Game Rules

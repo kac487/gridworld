@@ -106,7 +106,6 @@ class Player:
                 # Update the new position on the grid
                 grid[self.pos[0], self.pos[1], LAYERS.own_players] = True
 
-
         elif action == ACTIONS.ball:
             # Player action is on the ball
             # TODO the following:
