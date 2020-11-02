@@ -1,27 +1,42 @@
 import matplotlib.pyplot as plt
-import matplotlib as mpl
+import numpy as np
 
+# %matplotlib tk
 
 class Window:
-    def __init__(self):
-        self.fig, self.ax = plt.subplots()
-        self.fig.canvas.set_window_title("grid_soccer")
-        self.cmap = mpl.colors.ListedColormap(['black', 'white', 'red', 'green'])
-        bounds = [-2, -0.5, 0.5, 1.5, 2]
-        self.norm = mpl.colors.BoundaryNorm(bounds, self.cmap.N)
+    def __init__(self, img_size):
 
-        self.ax.set_xticks([], [])
-        self.ax.set_yticks([], [])
+        self.img_size = img_size
+
+        self.fig = plt.figure()
+        self.axes = {
+            'blue': self.fig.add_subplot(1, 2, 1),
+            'red': self.fig.add_subplot(1, 2, 2),
+        }
+
+        for t, ax in self.axes.items():
+            ax.set_title(t + ' perspective')
+            ax.get_yaxis().set_visible(False)
+            ax.get_xaxis().set_visible(False)
+
+        self.img_h = {
+            'blue': self.axes['blue'].imshow(np.zeros(self.img_size)),
+            'red': self.axes['red'].imshow(np.zeros(self.img_size)),
+        }
+
+        self.fig.canvas.set_window_title("Grid Soccer")
 
         self.closed = False
 
         def close_handler(evt):
             self.closed = True
+
         self.fig.canvas.mpl_connect('close_event', close_handler)
 
-    def show_grid(self, grid):
+    def show_grid(self, img_dict):
 
-        self.ax.imshow(grid, cmap=self.cmap, norm=self.norm)
+        for team, hdl in self.img_h.items():
+            hdl.set_data(img_dict[team])
         self.fig.canvas.draw()
 
         # Let matplotlib process UI events
@@ -44,5 +59,6 @@ class Window:
     def close(self):
         plt.close()
 
-if '__name__' ==  __main__:
+
+if __name__ == '__main__':
     window = Window()

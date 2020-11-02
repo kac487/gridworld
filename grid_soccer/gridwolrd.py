@@ -5,6 +5,7 @@ from grid_soccer.utils import (
     LAYERS,
     place_random,
     check_valid_move,
+    grid_to_img,
     )
 
 
@@ -174,8 +175,9 @@ class SoccerGridWorld:
     def step(self, action):
         pass
 
+        # TODO
         # We update the defending team side first when the ball is on the side of the field
-        # next to the defending team's goal
+        # nearest the defending team's goal
 
         # Check which side of the field the ball is on
 
@@ -186,12 +188,8 @@ class SoccerGridWorld:
         return (None, None, None, None)
 
     def render(self):
-        import matplotlib.pyplot as plt
-        grid = self.teams['blue'].grid
-        render_grid = np.any(grid, axis=-1)*255
-        # plt.imshow(render_grid)
-        plt.imshow(grid[:, :, [0, 1, 2]].astype(np.int32)*255)
-        plt.show()
+        return {'blue': grid_to_img(self.teams['blue'].grid),
+                'red': grid_to_img(self.teams['red'].grid), }
 
 
 if __name__ == '__main__':

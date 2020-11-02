@@ -1,5 +1,7 @@
+from matplotlib import colors
 from enum import IntEnum
 import numpy as np
+
 
 class Actions(IntEnum):
     up = 0
@@ -7,6 +9,8 @@ class Actions(IntEnum):
     left = 2
     right = 3
     ball = 4
+
+
 ACTIONS = Actions
 
 
@@ -14,6 +18,8 @@ class FieldZone(IntEnum):
     left = 0
     middle = 1
     right = 2
+
+
 FIELD_ZONE = FieldZone
 
 
@@ -23,7 +29,18 @@ class Layers(IntEnum):
     ball = 2
     rival_players = 3
     rival_goal = 4
+
+
 LAYERS = Layers
+
+# Assign a color to each channel
+LAYER_COLORS = {
+    LAYERS.own_goal: 'lightgreen',
+    LAYERS.own_players: 'green',
+    LAYERS.ball: 'blueviolet',
+    LAYERS.rival_players: 'darkorange',
+    LAYERS.rival_goal: 'wheat'
+}
 
 
 def place_random(region, field_size, num_draws=1):
@@ -99,3 +116,11 @@ def check_valid_move(pos, action, grid):
             valid_move = False
 
     return valid_move
+
+
+# %% Convert channels to colors
+def grid_to_img(grid):
+    img = np.zeros(grid.shape[:2] + (3,))
+    for lyr in LAYERS:
+        img = np.maximum(img, np.array(colors.to_rgb(LAYER_COLORS[lyr])) * grid[:, :, lyr:lyr+1])
+    return img

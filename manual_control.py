@@ -1,59 +1,62 @@
 import sys
 import numpy as np
-from gridwolrd import GridWorld
+from grid_soccer.gridwolrd import SoccerGridWorld
 from window import Window
 
+class ManualController:
+    def __init__(self, env):
+        self.controlled_player = 0
+        self.env = env
 
-def reset():
-    state = env.reset()
-    window.show_grid(state)
+    def reset(self,):
+        state = env.reset()
+        img_dict = env.render()
+        window.show_grid(img_dict)
 
+    def step(self, action):
+        state, reward, done, info = env.step(action)
+        img_dict = env.render()
+        # print('action=%d, reward=%.2f' % (action, reward))
 
-def step(action):
-    state, reward, done = env.step(action)
-    print('action=%d, reward=%.2f' % (action, reward))
+        if done:
+            print('done!')
+            self.reset()
+        else:
+            window.show_grid(img_dict)
 
-    if done:
-        print('done!')
-        reset()
-    else:
-        window.show_grid(state)
+    def key_handler(self, event):
+        print('pressed', event.key)
 
+        if event.key == 'escape':
+            window.close()
+            return
 
-def key_handler(event):
-    print('pressed', event.key)
+        if event.key == 'backspace':
+            self.reset()
+            return
 
-    if event.key == 'escape':
-        window.close()
-        return
-
-    if event.key == 'backspace':
-        reset()
-        return
-
-    if event.key == 'up':
-        step(env.actions.up)
-        return
-    if event.key == 'down':
-        step(env.actions.down)
-        return
-    if event.key == 'left':
-        step(env.actions.left)
-        return
-    if event.key == 'right':
-        step(env.actions.right)
-        return
+        if event.key == 'up':
+            self.step(env.actions.up)
+            return
+        if event.key == 'down':
+            self.step(env.actions.down)
+            return
+        if event.key == 'left':
+            self.step(env.actions.left)
+            return
+        if event.key == 'right':
+            self.step(env.actions.right)
+            return
 
 
 if __name__ == '__main__':
-    if len(sys.argv) >= 2:
-        env = GridWorld((int(sys.argv[1]), int(sys.argv[2])))
-    else:
-        env = GridWorld()
-    window = Window()
-    window.reg_key_handler(key_handler)
 
-    reset()
+    env = SoccerGridWorld()
+    window = Window(img_size=(env.height, env.width, 3))
+    man_ctrl = ManualController(env=env)
+    window.reg_key_handler(man_ctrl.key_handler)
+
+    man_ctrl.reset()
 
     # Blocking event loop
     window.show(block=True)
