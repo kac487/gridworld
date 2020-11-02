@@ -5,7 +5,7 @@ import matplotlib as mpl
 class Window:
     def __init__(self):
         self.fig, self.ax = plt.subplots()
-        self.fig.canvas.set_window_title("gridworld")
+        self.fig.canvas.set_window_title("grid_soccer")
         self.cmap = mpl.colors.ListedColormap(['black', 'white', 'red', 'green'])
         bounds = [-2, -0.5, 0.5, 1.5, 2]
         self.norm = mpl.colors.BoundaryNorm(bounds, self.cmap.N)
@@ -43,3 +43,6 @@ class Window:
 
     def close(self):
         plt.close()
+
+if '__name__' ==  __main__:
+    window = Window()
