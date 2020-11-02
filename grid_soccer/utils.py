@@ -4,11 +4,12 @@ import numpy as np
 
 
 class Actions(IntEnum):
-    up = 0
-    down = 1
-    left = 2
-    right = 3
-    ball = 4
+    no_move = 0
+    up = 1
+    down = 2
+    left = 3
+    right = 4
+    ball = 5
 
 
 ACTIONS = Actions
@@ -68,10 +69,11 @@ def place_random(region, field_size, num_draws=1):
 
 # %% Check that movement is valid
 def check_valid_move(pos, action, grid):
-    assert action.real < 4  # only should be called on movement actions
+    assert action.real < 5  # only should be called on movement actions
 
     # Ignore goal layers and perform logical or to get reduced grid of obsticles
-    obsticle_grid = np.any(grid[:, 1:-1, [LAYERS.own_players, LAYERS.rival_players]], axis=-1)
+    obsticle_grid = np.any(grid[:, :, [LAYERS.own_players, LAYERS.rival_players]], axis=-1)
+    # print(obsticle_grid)
 
     # Make sure we are still on the board
     assert -1 < pos[0] < obsticle_grid.shape[0] and -1 < pos[1] < obsticle_grid.shape[1]
@@ -84,7 +86,7 @@ def check_valid_move(pos, action, grid):
         if pos[0] == 0:
             # Can't move off the board
             valid_move = False
-        elif obsticle_grid[pos[0]-1, pos[1]] is True:
+        elif obsticle_grid[pos[0]-1, pos[1]]:
             # Can't move if an object is there
             valid_move = False
 
@@ -93,7 +95,7 @@ def check_valid_move(pos, action, grid):
         if pos[0] == obsticle_grid.shape[0]-1:
             # Can't move off the board
             valid_move = False
-        elif obsticle_grid[pos[0]+1, pos[1]] is True:
+        elif obsticle_grid[pos[0]+1, pos[1]]:
             # Can't move if an object is there
             valid_move = False
 
@@ -102,7 +104,7 @@ def check_valid_move(pos, action, grid):
         if pos[1] == 0:
             # Can't move off the board
             valid_move = False
-        elif obsticle_grid[pos[0], pos[1]-1] is True:
+        elif obsticle_grid[pos[0], pos[1]-1]:
             # Can't move if an object is there
             valid_move = False
 
@@ -111,9 +113,12 @@ def check_valid_move(pos, action, grid):
         if pos[1] == obsticle_grid.shape[1]-1:
             # Can't move off the board
             valid_move = False
-        elif obsticle_grid[pos[0], pos[1]+1] is True:
+        elif obsticle_grid[pos[0], pos[1]+1]:
             # Can't move if an object is there
             valid_move = False
+
+    if valid_move is False:
+        print('Invalid Move')
 
     return valid_move
 

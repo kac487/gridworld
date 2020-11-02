@@ -25,6 +25,7 @@ class Window:
         }
 
         self.fig.canvas.set_window_title("Grid Soccer")
+        plt.tight_layout()
 
         self.closed = False
 
