@@ -32,7 +32,6 @@ class Team:
         # Create reference to rival team
         self.rival_team = None
 
-
     def step(self, action):
         # Split action vector per player
         for i, plyr in enumerate(self.players):

@@ -28,6 +28,8 @@ class ManualController:
     def key_handler(self, event):
         print('pressed', event.key)
 
+        default_action = [env.actions.no_move, ] * 3
+
         if event.key == 'escape':
             window.close()
             return
@@ -36,24 +38,46 @@ class ManualController:
             self.reset()
             return
 
+        if event.key == '1':
+            self.controlled_player = 1
+            return
+
+        if event.key == '2':
+            self.controlled_player = 2
+            return
+
+        if event.key == '3':
+            self.controlled_player = 3
+            return
+
         if event.key == 'up':
-            self.step({'blue': (env.actions.up,)*3, 'red': (env.actions.no_move,)*3})
+            act = default_action.copy()
+            act[self.controlled_player-1] = env.actions.up
+            self.step({'blue': act, 'red': default_action})
             return
 
         if event.key == 'down':
-            self.step({'blue': (env.actions.down,)*3, 'red': (env.actions.no_move,)*3})
+            act = default_action.copy()
+            act[self.controlled_player-1] = env.actions.down
+            self.step({'blue': act, 'red': default_action})
             return
 
         if event.key == 'left':
-            self.step({'blue': (env.actions.left,)*3, 'red': (env.actions.no_move,)*3})
+            act = default_action.copy()
+            act[self.controlled_player-1] = env.actions.left
+            self.step({'blue': act, 'red': default_action})
             return
 
         if event.key == 'right':
-            self.step({'blue': (env.actions.right,)*3, 'red': (env.actions.no_move,)*3})
+            act = default_action.copy()
+            act[self.controlled_player-1] = env.actions.right
+            self.step({'blue': act, 'red': default_action})
             return
 
         if event.key == ' ':
-            self.step({'blue': (env.actions.ball,)*3, 'red': (env.actions.no_move,)*3})
+            act = default_action.copy()
+            act[self.controlled_player-1] = env.actions.ball
+            self.step({'blue': act, 'red': default_action})
             return
 
 
