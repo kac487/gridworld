@@ -90,6 +90,8 @@ class SoccerGridWorld(gym.Env):
             if self.teams['red'].side is FIELD_ZONE.right:
                 update_order.reverse()
 
+        # NOTE: This is where each team updates the other wiht a projected set of layers
+
         for i in range(len(update_order)):
             # Output layers of what the teams is projecting is happening
             team_lyrs_proj = self.teams[update_order[i]].step(action[update_order[i]])
@@ -97,8 +99,6 @@ class SoccerGridWorld(gym.Env):
                 self.teams[update_order[i+1]].grid[:, :, -3:] = np.flip(team_lyrs_proj, axis=-1)
             elif i == 1:
                 self.teams[update_order[i-1]].grid[:, :, -3:] = np.flip(team_lyrs_proj, axis=-1)
-
-        # TODO add logic for moving the ball, passig, and stealing
 
         obs = {'blue': self.teams['blue'].grid, 'red': self.teams['red'].grid}
         reward = {'blue': 0, 'red': 0}
