@@ -100,6 +100,9 @@ class SoccerGridWorld(gym.Env):
             elif i == 1:
                 self.teams[update_order[i-1]].grid[:, :, -3:] = np.flip(team_lyrs_proj, axis=-1)
 
+        # TODO derive the true ball position from both teams and track it there
+        # TODO use ball position to set the done flag
+
         obs = {'blue': self.teams['blue'].grid, 'red': self.teams['red'].grid}
         reward = {'blue': 0, 'red': 0}
         done = {'blue': False, 'red': False}

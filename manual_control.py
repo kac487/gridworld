@@ -19,9 +19,9 @@ class ManualController:
         img_dict = env.render()
         # print('action=%d, reward=%.2f' % (action, reward))
 
-        # if done:
-        #     print('done!')
-        #     self.reset()
+        if done['blue'] or done['red']:
+            print('done!')
+            self.reset()
         # else:
         window.show_grid(img_dict)
 
