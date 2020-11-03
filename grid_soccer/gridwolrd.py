@@ -1,137 +1,13 @@
 import numpy as np
 import gym
+from grid_soccer.team import Team
 from grid_soccer.utils import (
     FIELD_ZONE,
     ACTIONS,
     LAYERS,
     place_random,
-    check_valid_move,
     grid_to_img,
     )
-
-
-# %% Team Class
-class Team:
-    def __init__(self, field_size, n_players):
-        '''
-        Class for team of agents
-        '''
-        self.n_players = n_players
-        # Create a set of n_players
-        self.field_size = field_size
-
-        # Set default value for the grid
-        self.grid = None
-
-        # Set default value for side
-        self.side = None
-
-        # Create a list of players
-        self.players = [Player() for _ in range(self.n_players)]
-
-    def step(self, action):
-        # Split action vector per player
-        for i, plyr in enumerate(self.players):
-            # Each of the players takes action
-            self.grid = plyr.take_action(action[i], self.grid)
-
-        # TODO add split from internal state here for fakes
-        grid_lyr_proj = self.grid[:, :, :3]
-
-        return grid_lyr_proj
-
-    def reset(self, side):
-
-        self.side = side
-
-        # Team Grid of shape (Y, X, [goal, own_players])
-        team_grid = np.zeros(shape=(self.field_size[0], self.field_size[1], 2), dtype=np.bool)
-
-        # Re-spawn players
-        player_spawns = place_random(region=side, field_size=self.field_size, num_draws=self.n_players)
-        for i, plyr in enumerate(self.players):
-            team_grid[player_spawns[i, 0], player_spawns[i, 1], LAYERS.own_players] = True
-            plyr.reset(pos=player_spawns[i])
-
-        # Set the goal grid position(s)
-        if side is FIELD_ZONE.left:
-            x_ix = 0
-        elif side is FIELD_ZONE.right:
-            x_ix = self.field_size[1]-1
-        else:
-            raise ValueError('Invalid side specified %s' % side)
-
-        team_grid[self.field_size[0]//2-1:self.field_size[0]//2+2, x_ix, LAYERS.own_goal] = True
-
-        return team_grid
-
-
-# %% Player Class
-class Player:
-    def __init__(self, ):
-        '''
-        Class for agents (members of a team)
-        '''
-        super().__init__()
-
-        self.has_ball = False
-        self.pos = None
-
-    def take_action(self, action, grid):
-        # move player to new positition
-        # action(up:0, down:1, left:2, right:3)
-
-        if action == ACTIONS.no_move:
-            # No move made for this player
-            return grid
-
-        if action in [ACTIONS.up, ACTIONS.down, ACTIONS.left, ACTIONS.right]:
-            # Player action is to move
-            if check_valid_move(self.pos, action, grid):
-                # We are moving to a valid location
-
-                # Rremove current position on the grid
-                grid[self.pos[0], self.pos[1], LAYERS.own_players] = False
-
-                # Update the player's position
-                if action == ACTIONS.up:
-                    self.pos[0] -= 1
-                elif action == ACTIONS.down:
-                    self.pos[0] += 1
-                elif action == ACTIONS.left:
-                    self.pos[1] -= 1
-                elif action == ACTIONS.right:
-                    self.pos[1] += 1
-
-                # Update the new position on the grid
-                grid[self.pos[0], self.pos[1], LAYERS.own_players] = True
-
-        elif action == ACTIONS.ball:
-            # Player action is on the ball
-            # TODO the following:
-            # Pick up the ball if we are next to it
-            # Drop the ball if there are no players to pass to
-            # Pass the ball if there is a teammate close
-            # Steal the ball if we are near a rival player with it
-            pass
-
-        else:
-            raise ValueError('Invalid action specified: %s' % action)
-
-        # handle ball plays (pick, drop, pass, steal)
-        print('current_pos ', self.pos)
-
-        # Return the grid
-        return grid
-
-    def reset(self, pos):
-        self.has_ball = False
-        self.pos = pos
-        # respawn at specified location
-
-    def fake(self,):
-        pass
-        # TODO: Impiment this
 
 
 # %% SoccerGridWorld Class
@@ -155,6 +31,10 @@ class SoccerGridWorld(gym.Env):
             'blue': Team(field_size=(self.height, self.width), n_players=self.n_team_players),
             'red': Team(field_size=(self.height, self.width), n_players=self.n_team_players),
         }
+
+        # Set references to rival teams
+        self.teams['blue'].rival_team = self.teams['red']
+        self.teams['red'].rival_team = self.teams['blue']
 
     def get_act_space(self,):
         return {'blue': gym.spaces.Box(low=0, high=len(ACTIONS), shape=self.n_team_players),

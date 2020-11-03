@@ -67,62 +67,6 @@ def place_random(region, field_size, num_draws=1):
     return np.vstack((rand_y, rand_x)).T
 
 
-# %% Check that movement is valid
-def check_valid_move(pos, action, grid):
-    assert action.real < 5  # only should be called on movement actions
-
-    # Ignore goal layers and perform logical or to get reduced grid of obsticles
-    obsticle_grid = np.any(grid[:, :, [LAYERS.own_players, LAYERS.rival_players]], axis=-1)
-    # print(obsticle_grid)
-
-    # Make sure we are still on the board
-    assert -1 < pos[0] < obsticle_grid.shape[0] and -1 < pos[1] < obsticle_grid.shape[1]
-
-    # Assume move is valid before running checks
-    valid_move = True
-
-    # MOVING UP
-    if action == ACTIONS.up:
-        if pos[0] == 0:
-            # Can't move off the board
-            valid_move = False
-        elif obsticle_grid[pos[0]-1, pos[1]]:
-            # Can't move if an object is there
-            valid_move = False
-
-    # MOVING DOWN
-    elif action == ACTIONS.down:
-        if pos[0] == obsticle_grid.shape[0]-1:
-            # Can't move off the board
-            valid_move = False
-        elif obsticle_grid[pos[0]+1, pos[1]]:
-            # Can't move if an object is there
-            valid_move = False
-
-    # MOVING LEFT
-    elif action == ACTIONS.left:
-        if pos[1] == 0:
-            # Can't move off the board
-            valid_move = False
-        elif obsticle_grid[pos[0], pos[1]-1]:
-            # Can't move if an object is there
-            valid_move = False
-
-    # MOVING RIGHT
-    elif action == ACTIONS.right:
-        if pos[1] == obsticle_grid.shape[1]-1:
-            # Can't move off the board
-            valid_move = False
-        elif obsticle_grid[pos[0], pos[1]+1]:
-            # Can't move if an object is there
-            valid_move = False
-
-    if valid_move is False:
-        print('Invalid Move')
-
-    return valid_move
-
-
 # %% Convert channels to colors
 def grid_to_img(grid):
     img = np.zeros(grid.shape[:2] + (3,))

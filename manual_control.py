@@ -28,8 +28,6 @@ class ManualController:
     def key_handler(self, event):
         print('pressed', event.key)
 
-        red_actions = {'red': (env.actions.no_move,)*3}
-
         if event.key == 'escape':
             window.close()
             return
@@ -52,6 +50,10 @@ class ManualController:
 
         if event.key == 'right':
             self.step({'blue': (env.actions.right,)*3, 'red': (env.actions.no_move,)*3})
+            return
+
+        if event.key == ' ':
+            self.step({'blue': (env.actions.ball,)*3, 'red': (env.actions.no_move,)*3})
             return
 
 
